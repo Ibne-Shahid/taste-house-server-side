@@ -29,6 +29,7 @@ async function run() {
         app.get('/foods', async (req, res) => {
 
             const email = req.query.email
+
             const query = {}
             if (email) {
                 query.sellerEmail = email
@@ -45,11 +46,17 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/foods/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
 
+            const result = await foodsCollection.findOne(query)
+            res.send(result)
+        })
 
         app.post('/foods', async (req, res) => {
             const newFoodData = req.body
-            const {title, shortDescription, fullDescription, price, priority, relevantField, imageUrl, sellerEmail, sellerUsername, category} = newFoodData
+            const { title, shortDescription, fullDescription, price, priority, relevantField, imageUrl, sellerEmail, sellerUsername, category } = newFoodData
             const newFood = {
                 title,
                 shortDescription,
@@ -63,7 +70,7 @@ async function run() {
                 sellerUsername,
                 category
             }
-            
+
             const result = await foodsCollection.insertOne(newFood)
             res.send(result)
         })
