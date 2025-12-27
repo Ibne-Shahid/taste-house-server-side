@@ -25,6 +25,7 @@ async function run() {
 
         const db = client.db('taste_house')
         const foodsCollection = db.collection('foods')
+        const ordersCollection = db.collection('orders')
 
         app.get('/foods', async (req, res) => {
 
@@ -79,6 +80,19 @@ async function run() {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
             const result = await foodsCollection.deleteOne(query)
+            res.send(result)
+        })
+
+        app.post('/orders', async (req, res)=>{
+            const newOrderData = req.body
+            const {foodId, foodName, price, imageUrl, relevantField, category, sellerEmail, customerEmail } = newOrderData
+
+            const newOrder = {
+                foodId, foodName, price, imageUrl, relevantField, category, sellerEmail, customerEmail,
+                date: new Date().toISOString().slice(0, 10)
+            }
+
+            const result = await ordersCollection.insertOne(newOrder)
             res.send(result)
         })
 
